@@ -1,6 +1,8 @@
 from pygame import *
 font.init()
 
+
+
 class GameSprite(sprite.Sprite):
     def __init__(self,image_name, player_x,player_y, size_x, size_y, player_speed):
         sprite.Sprite.__init__(self)
@@ -21,14 +23,17 @@ class Player(GameSprite):
         if keys[K_s]and self.rect.y < 300:
             self.rect.y += self.speed
 
-    def update_2(self):
+    def update(self):
         keys = key.get_pressed()
         if keys[K_UP]and self.rect.y >5:
             self.rect.y -= self.speed
         if keys[K_DOWN]and self.rect.y < 300:
             self.rect.y += self.speed
 
-
+class Ball(GameSprite):
+    def dd(self):
+        pass
+   
 
 win_h = 700
 win_w = 500
@@ -40,22 +45,43 @@ run = True
 Player1 = Player('Plat.png', 10, 150, 100, 200, 5)
 Player2 = Player('Plat.png', 630, 150, 100, 200, 5)
 
+
+ball = Ball('Ball.png', 300, 10, 50, 50 , 100)
+
 WHITE = (190, 220, 235)
 
+speed_x = 3
+speed_y = 3
+finish = False
 
 while run:
     for e in event.get():
-        if e.type == QUIT or e.type == [K_ESCAPE]:
-            run = False 
+        if e.type == QUIT:
+            run = False
+            
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+    if ball.rect.y > win_w - 50 or ball.rect.y <0:
+        speed_y += 0.7
+        speed_y *= -1
+
 
     window.fill(WHITE)
     Player1.update_1()
     Player1.reset()
-    Player2.update_2()
+    Player2.update()
     Player2.reset()
+    ball.reset()
+
+    if sprite.collide_rect(Player2, ball) or sprite.collide_rect(Player1, ball):
+        speed_y += 1
+        speed_x *= -1
 
     clock.tick(Fps)
     display.update()
+
 
 
 
